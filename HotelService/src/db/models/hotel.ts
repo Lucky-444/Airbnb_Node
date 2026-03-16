@@ -13,6 +13,7 @@ class Hotel extends Model<
   declare id: CreationOptional<number>;
   declare name: string;
   declare location: string;
+  declare address: string;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
   declare ratings: number | null;
@@ -28,6 +29,10 @@ Hotel.init(
       primaryKey: true,
     },
     name: {
+      type: "STRING",
+      allowNull: false,
+    },
+    address : {
       type: "STRING",
       allowNull: false,
     },

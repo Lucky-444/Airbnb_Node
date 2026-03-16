@@ -40,6 +40,7 @@ app.listen(serverConfig.PORT, async() => {
         const hotel = await Hotel.create({
             name: "Hotel California",
             location: "Los Angeles",
+            address : "42 Sunset Boulevard, Los Angeles, CA 90001",
             rating_count: 100,
             ratings: 4.5
         });
