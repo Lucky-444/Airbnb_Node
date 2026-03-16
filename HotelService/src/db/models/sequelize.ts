@@ -1,7 +1,5 @@
 import { Sequelize } from "sequelize";
 import { dbConfig } from "../../config/index";
-
-console.log("DB CONFIG"  , dbConfig);
 const sequelize = new Sequelize({
   dialect: "mysql",
   host: dbConfig.DB_HOST,

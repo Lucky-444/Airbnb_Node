@@ -1,8 +1,6 @@
 require("ts-node/register");
 
 const { dbConfig } = require("./index.ts");
-
-console.log("DB CONFIG:", dbConfig);
 module.exports = {
   development: {
     username: dbConfig.DB_USER,
