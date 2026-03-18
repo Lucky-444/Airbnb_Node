@@ -23,7 +23,18 @@ async function getHotelById(hotelId: number) {
     return hotel;
 }
 
+async function getAllHotels() {
+    const hotels = await Hotel.findAll();
+    if(!hotels || hotels.length === 0) {
+        logger.warn("No hotels found in the database");
+        throw new NotFoundError("No hotels found");
+    }
+    logger.info(`Retrieved all hotels, count: ${hotels.length}`);
+    return hotels;
+}
+
 export default {
     createHotel,
-    getHotelById
+    getHotelById,
+    getAllHotels
 }

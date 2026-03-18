@@ -13,4 +13,12 @@ export async function getHotelByIdService(hotelId: number) {
 }
 
 
+export async function getAllHotelsService() {
+    // Implementation for retrieving all hotels
+    const hotels = await hotelRepository.getAllHotels();
+    return hotels;
+}
+
+
+
 
