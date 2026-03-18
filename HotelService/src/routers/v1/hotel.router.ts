@@ -3,6 +3,7 @@ import {
   createHotelHandler,
   getAllHotelsHandler,
   getHotelByIdHandler,
+  SoftdeleteHotelHandler,
 } from "../../controllers/hotel.controller";
 import { validateRequestBody } from "../../validators";
 import {
@@ -24,6 +25,11 @@ hotelRouter.get(
 hotelRouter.get(
   "/",
   getAllHotelsHandler,
+);
+
+hotelRouter.delete(
+  "/:id",
+  SoftdeleteHotelHandler,
 );
 
 export default hotelRouter;

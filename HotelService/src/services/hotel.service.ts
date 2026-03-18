@@ -19,6 +19,12 @@ export async function getAllHotelsService() {
     return hotels;
 }
 
+export async function SoftdeleteHotelService(hotelId: number) {
+    // Implementation for soft deleting a hotel
+    const hotel = await hotelRepository.SoftdeleteHotel(hotelId);
+    return hotel;
+}
+
 
 
 

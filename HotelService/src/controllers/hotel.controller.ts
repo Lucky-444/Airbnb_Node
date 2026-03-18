@@ -4,6 +4,7 @@ import {
   createHotelService,
   getAllHotelsService,
   getHotelByIdService,
+  SoftdeleteHotelService,
 } from "../services/hotel.service";
 import logger from "../config/logger.config";
 import { StatusCodes } from "http-status-codes";
@@ -59,6 +60,23 @@ export async function getAllHotelsHandler(req: Request, res: Response) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: "Failed to retrieve hotels",
+    });
+  }
+}
+
+export async function SoftdeleteHotelHandler(req: Request, res: Response) {
+  try {
+    const hotelId = Number(req.params.id);
+    await SoftdeleteHotelService(hotelId);
+    
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: "Hotel marked as deleted successfully",
+    });
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Failed to mark hotel as deleted",
     });
   }
 }

@@ -14,6 +14,7 @@ class Hotel extends Model<
   declare name: string;
   declare location: string;
   declare address: string;
+  declare deletedAt: CreationOptional<Date | null>;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
   declare ratings?: number | null;
@@ -50,6 +51,12 @@ Hotel.init(
       allowNull: true,
       defaultValue: null,
     },
+    deletedAt: {
+      type: "DATE",
+      allowNull: true,
+      defaultValue: null,
+    },
+
     createdAt: {
       allowNull: false,
       type: "DATE",
