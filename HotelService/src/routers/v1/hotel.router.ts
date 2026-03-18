@@ -4,6 +4,7 @@ import {
   getAllHotelsHandler,
   getHotelByIdHandler,
   SoftdeleteHotelHandler,
+  updateHotelHandler,
 } from "../../controllers/hotel.controller";
 import { validateRequestBody } from "../../validators";
 import {
@@ -31,5 +32,17 @@ hotelRouter.delete(
   "/:id",
   SoftdeleteHotelHandler,
 );
+
+hotelRouter.put(
+  "/:id",
+  updateHotelHandler,
+);
+
+hotelRouter.patch(
+  "/:id",
+  updateHotelHandler,
+);
+
+
 
 export default hotelRouter;

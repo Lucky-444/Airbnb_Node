@@ -25,6 +25,11 @@ export async function SoftdeleteHotelService(hotelId: number) {
     return hotel;
 }
 
+export async function updateHotelService(data: any) {
+  const hotel = await hotelRepository.updateHotel(data);
+  return hotel;
+}
+
 
 
 

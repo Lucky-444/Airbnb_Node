@@ -5,3 +5,8 @@ soft delete is a technique where instead of permanently deleting a record from t
 
 ## paranoid option in Sequelize
 The paranoid option in Sequelize is used to enable soft deletes for a model. When you set paranoid: true in your model definition, Sequelize will add a deletedAt column to your table. Instead of permanently deleting records when you call the destroy method, Sequelize will set the deletedAt column to the current timestamp. This way, the record is not actually removed from the database, but it is treated as deleted in your application logic. When you query the model, Sequelize will automatically exclude records with a non-null deletedAt value, allowing you to work with only the active records while still keeping the deleted records in the database for potential recovery or auditing purposes.
+
+??It is also Known as TOMBSTONE in some databases.
+## TOMBSTONE in databases
+Tombstone is a term used in databases to refer to a marker that indicates that a record has been deleted. When a record is deleted, instead of removing it from the database, a tombstone is created to indicate that the record has been marked as deleted. This allows the database to keep track of deleted records without actually removing them, which can be useful for auditing purposes or for recovering deleted data if needed. In some databases, tombstones are implemented as a special column or flag that is set when a record is deleted, while in others, they may be implemented as a separate table that tracks deleted records.
+
