@@ -5,6 +5,7 @@ import {
   getHotelByIdService,
 } from "../services/hotel.service";
 import logger from "../config/logger.config";
+import { StatusCodes } from "http-status-codes";
 
 export async function createHotelHandler(req: Request, res: Response) {
   try {
@@ -14,12 +15,12 @@ export async function createHotelHandler(req: Request, res: Response) {
 
     logger.info(`Hotel created successfully with id: ${hotel.id}`);
 
-    res.status(201).json({
+    res.status(StatusCodes.CREATED).json({
       success: true,
       data: hotel,
     });
   } catch (error) {
-    res.status(500).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: "Failed to create hotel",
     });
@@ -27,17 +28,19 @@ export async function createHotelHandler(req: Request, res: Response) {
 }
 
 export async function getHotelByIdHandler(req: Request, res: Response) {
+  console.log(req.params);
+  
   try {
     const hotelId = parseInt(req.params.id, 10);
          
     const hotel = await getHotelByIdService(hotelId);
 
-    res.status(200).json({
+    res.status(StatusCodes.OK).json({
       success: true,
       data: hotel,
     });
   } catch (error) {
-    res.status(500).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: "Failed to retrieve hotel",
     });

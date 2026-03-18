@@ -6,7 +6,6 @@ import {
 import { validateRequestBody } from "../../validators";
 import {
   createHotelSchema,
-  getHotelByIdSchema,
 } from "../../validators/hotel.validator";
 
 const hotelRouter = express.Router();
@@ -18,7 +17,6 @@ hotelRouter.post(
 );
 hotelRouter.get(
   "/:id",
-  validateRequestBody(getHotelByIdSchema),
   getHotelByIdHandler,
 );
 

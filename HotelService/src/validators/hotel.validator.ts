@@ -8,18 +8,4 @@ export const createHotelSchema = z.object({
   rating_count: z.number().min(0).optional(),
 });
 
-export const getHotelByIdSchema = z.object({
-  id: z.string().transform((val, ctx) => {
-    const parsed = parseInt(val, 10);
-    if (isNaN(parsed)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.invalid_type,
-        expected: "number",
-        received: "string",
-        message: "Hotel ID must be a number",
-      });
-      return z.NEVER;
-    }
-    return parsed;
-  }),
-});
+
