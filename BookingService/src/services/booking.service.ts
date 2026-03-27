@@ -1,3 +1,4 @@
+import { createBookingDto } from "../dto/booking.dto";
 import {
   confirmBooking,
   createBooking,
@@ -9,16 +10,13 @@ import { BadRequestError, NotFoundError } from "../utils/errors/app.error";
 import { generateIdempotencyKey } from "../utils/generateIdempotencyKey";
 
 export async function createBookingService(
-  userId: number,
-  hotelId: number,
-  bookingAmount: number,
-  totalGuest: number,
+  createBookingData: createBookingDto,
 ) {
   const booking = await createBooking({
-    userId,
-    hotelId,
-    BookingAmount: bookingAmount,
-    totalGuest,
+    userId: createBookingData.userId,
+    hotelId: createBookingData.hotelId,
+    BookingAmount: createBookingData.BookingAmount,
+    totalGuest: createBookingData.totalGuest,
   });
 
   const idempotencyKey = generateIdempotencyKey();
@@ -31,7 +29,7 @@ export async function createBookingService(
   };
 }
 
-export async function finallizeBookingService(idempotencyKey: string) {
+export async function confirmBookingService(idempotencyKey: string) {
   const idempotencyKeyData = await getIdempotencyKey(idempotencyKey);
 
   if (!idempotencyKeyData) {
