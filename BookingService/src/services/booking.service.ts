@@ -1,22 +1,51 @@
-export async function createBookingService(bookingData: any) {
-  // Logic to create a new booking
-  // This is a placeholder implementation. You should replace it with actual database logic.
-  const booking = {
-    id: Math.floor(Math.random() * 1000), // Simulating an auto-generated ID
-    ...bookingData,
-    createdAt: new Date(),
+import {
+  confirmBooking,
+  createBooking,
+  createIdempotencyKey,
+  finalizedIdempotencyKey,
+  getIdempotencyKey,
+} from "../repositories/booking.repository";
+import { BadRequestError, NotFoundError } from "../utils/errors/app.error";
+import { generateIdempotencyKey } from "../utils/generateIdempotencyKey";
+
+export async function createBookingService(
+  userId: number,
+  hotelId: number,
+  bookingAmount: number,
+  totalGuest: number,
+) {
+  const booking = await createBooking({
+    userId,
+    hotelId,
+    BookingAmount: bookingAmount,
+    totalGuest,
+  });
+
+  const idempotencyKey = generateIdempotencyKey();
+
+  await createIdempotencyKey(idempotencyKey, booking.id);
+
+  return {
+    bookingId: booking.id,
+    idempotencyKey: idempotencyKey,
   };
-  return booking; 
 }
 
+export async function finallizeBookingService(idempotencyKey: string) {
+  const idempotencyKeyData = await getIdempotencyKey(idempotencyKey);
 
-export async function finallizeBookingService(bookingId: number) {
-  // Logic to finalize a booking
-  // This is a placeholder implementation. You should replace it with actual database logic.
-  const finalizedBooking = {
-    id: bookingId,
-    status: "finalized",
-    finalizedAt: new Date(),
-  };
-  return finalizedBooking; 
+  if (!idempotencyKeyData) {
+    throw new NotFoundError("Idempotency Key Not Found");
+  }
+
+  if (idempotencyKeyData.finalized) {
+    throw new BadRequestError(
+      "ReBooking Not Possible Or Double Booking Not Possible",
+    );
+  }
+  const booking = await confirmBooking(idempotencyKeyData.bookingId);
+
+  await finalizedIdempotencyKey(idempotencyKey);
+
+  return booking;
 }

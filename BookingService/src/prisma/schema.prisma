@@ -10,7 +10,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  // url      = env("DATABASE_URL")cd
+  // url      = env("DATABASE_URL")
 }
 
 model Booking {
@@ -22,16 +22,17 @@ model Booking {
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
   totalGuest       Int
-  idempotencyKeyId Int?            @unique
-  idempotencyKey   IdempotencyKey? @relation(fields: [idempotencyKeyId], references: [id])
+  idempotencyKeyId IdempotencyKey?
 }
 
 model IdempotencyKey {
   id        Int      @id @default(autoincrement())
-  key       Int
+  key       String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  booking   Booking?
+  finalized Boolean  @default(false)
+  bookingId Int      @unique
+  booking   Booking? @relation(fields: [bookingId], references: [id])
 }
 
 enum BookingStatus {
