@@ -40,10 +40,10 @@ export async function getIdempotencyKeyWithLock(key: string , txn : Prisma.Trans
   }
 
  
-  const idempotencyKey : Array<IdempotencyKey>  = await txn.$queryRaw`
+  const idempotencyKey: Array<IdempotencyKey> = await txn.$queryRaw`
     SELECT *
-    FROM "IdempotencyKey"
-    WHERE "key" = ${key}
+    FROM IdempotencyKey
+    WHERE \`key\` = ${key}
     FOR UPDATE
   `;
 
@@ -87,7 +87,7 @@ export async function confirmBooking(bookingId : number , txn : Prisma.Transacti
 }
 
 export async function finalizedIdempotencyKey(key : string , txn : Prisma.TransactionClient){
-  
+
   const idempotencyKey = await txn.idempotencyKey.update({
     where:{
       key ,

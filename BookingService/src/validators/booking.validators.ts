@@ -9,7 +9,7 @@ export const createBookingSchema = z.object({
     .int()
     .positive({ message: "Total guests must be greater than 0" }),
 
-  bookingAmount: z.coerce
+  BookingAmount: z.coerce
     .number()
     .positive({ message: "Booking amount must be greater than 0" }),
 });
