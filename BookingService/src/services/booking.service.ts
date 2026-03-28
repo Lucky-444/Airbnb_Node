@@ -4,10 +4,12 @@ import {
   createBooking,
   createIdempotencyKey,
   finalizedIdempotencyKey,
-  getIdempotencyKey,
+  getIdempotencyKeyWithLock,
 } from "../repositories/booking.repository";
 import { BadRequestError, NotFoundError } from "../utils/errors/app.error";
 import { generateIdempotencyKey } from "../utils/generateIdempotencyKey";
+
+import prismaClient from "../prisma/client";
 
 export async function createBookingService(
   createBookingData: createBookingDto,
@@ -29,21 +31,32 @@ export async function createBookingService(
   };
 }
 
+
+//Added Pessimistic LOCK 
+// We gonna Use Select For Update 
 export async function confirmBookingService(idempotencyKey: string) {
-  const idempotencyKeyData = await getIdempotencyKey(idempotencyKey);
 
-  if (!idempotencyKeyData) {
-    throw new NotFoundError("Idempotency Key Not Found");
-  }
+  return await prismaClient.$transaction(async (txn) => {
+    
+    const idempotencyKeyData = await getIdempotencyKeyWithLock(idempotencyKey , txn);
 
-  if (idempotencyKeyData.finalized) {
-    throw new BadRequestError(
-      "ReBooking Not Possible Or Double Booking Not Possible",
-    );
-  }
-  const booking = await confirmBooking(idempotencyKeyData.bookingId);
 
-  await finalizedIdempotencyKey(idempotencyKey);
+    if (!idempotencyKeyData) {
+      throw new NotFoundError("Idempotency Key Not Found");
+    }
 
-  return booking;
+    if (idempotencyKeyData.finalized) {
+      throw new BadRequestError(
+        "ReBooking Not Possible Or Double Booking Not Possible",
+      );
+    }
+    const booking = await confirmBooking(idempotencyKeyData.bookingId , txn);
+
+    await finalizedIdempotencyKey(idempotencyKey , txn);
+
+    return booking;
+  })
+
+
+  
 }
