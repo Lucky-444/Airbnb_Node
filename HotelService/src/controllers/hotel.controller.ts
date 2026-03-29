@@ -100,3 +100,4 @@ export async function updateHotelHandler(req: Request, res: Response) {
     });
   }
 }
+
