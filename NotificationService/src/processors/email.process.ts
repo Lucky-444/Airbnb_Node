@@ -3,6 +3,10 @@ import { NotificationDTO } from "../dtos/notification.dto";
 import { MAILER_QUEUE_NAME } from "../queues/mailer.queue";
 import { getRedisConnection } from "../config/redis.config";
 import { MAILER_PAYLOAD } from "../producers/email.producer";
+import { renderTemplate } from "../templates/template.handler";
+import { sendEmail } from "../services/mailer.service";
+import logger from "../config/logger.config";
+
 
 export const setupEmailWorker = () => {
   const emailProcessor = new Worker<NotificationDTO>(
@@ -17,7 +21,13 @@ export const setupEmailWorker = () => {
       const payload = job.data;
       console.log("Processing email job with payload:", payload);
 
-      //     call the service Layer
+      // Simulate email sending logic (replace with actual email sending code)
+      const emailContent = await renderTemplate(payload.templateId, payload.params);
+
+      await sendEmail(payload.to, payload.subject, emailContent);
+
+      logger.info(`Email job with ID ${job.id} processed successfully.`); // Log successful processing
+      
     }, // Processor function to handle the email sending logic
 
     {

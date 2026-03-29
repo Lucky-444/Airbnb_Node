@@ -7,8 +7,8 @@ import logger from './config/logger.config';
 import { attachCorrelationIdMiddleware } from './middlewares/correlation.middleware';
 import dotenv from 'dotenv';
 import { setupEmailWorker } from './processors/email.process';
-import { NotificationDTO } from './dtos/notification.dto';
 import { addEmailToQueue } from './producers/email.producer';
+
 
 dotenv.config();
 
@@ -34,28 +34,21 @@ app.use(appErrorHandler);
 app.use(genericErrorHandler);
 
 
-app.listen(serverConfig.PORT, () => {
+app.listen(serverConfig.PORT, async() => {
     logger.info(`Server is running on http://localhost:${serverConfig.PORT}`);
     logger.info(`Press Ctrl+C to stop the server.`);
 
     setupEmailWorker(); // Initialize the email worker when the server starts
+    logger.info(`Email worker has been set up and is ready to process email jobs.`);
 
-    logger.info(`Email worker has been set up and is ready to process jobs.`);
+    addEmailToQueue({
+        to: 'sashankasekharswain0@gmail.com',
+        subject: 'Test Email from Notification Service',
+        templateId: 'welcome',
 
-    const noti : NotificationDTO = {
-        to : "sample",
-        subject : "sample subject",
-        templateId : "sample template",
-        params : {
-            name : "John Doe",
-            bookingId : "12345"
+        params: {
+            name: 'Sashank',
+            appName: 'Booking App',
         }
-    };
-    logger.info(`Sample NotificationDTO created: ${JSON.stringify(noti)}`);
-
-    addEmailToQueue(noti).then(() => {
-        logger.info(`Sample email job added to the queue successfully.`);
-    }).catch((error) => {
-        logger.error(`Failed to add sample email job to the queue: ${error}`);
-    });
+    })
 });
