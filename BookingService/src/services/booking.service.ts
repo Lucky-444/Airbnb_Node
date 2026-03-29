@@ -16,6 +16,7 @@ import { generateIdempotencyKey } from "../utils/generateIdempotencyKey";
 import prismaClient from "../prisma/client";
 import { redLock } from "../config/redis.config";
 import { serverConfig } from "../config";
+import { addEmailToQueue } from "../producers/email.producer";
 
 /**
  * Creates a new booking with distributed lock and idempotency guarantee
@@ -117,9 +118,24 @@ export async function confirmBookingService(idempotencyKey: string) {
       );
     }
     const booking = await confirmBooking(idempotencyKeyData.bookingId, txn);
-
+ 
+    console.log("booking Confirmation" , booking);
+    
     await finalizedIdempotencyKey(idempotencyKey, txn);
 
+    await addEmailToQueue({
+      to: "sashankasekharswain0@gmail.com",
+      subject: "Booking Confirmed",
+      templateId: "booking",
+      params: {
+        name: "Sashanka",
+        bookingId: booking.id,
+      },
+    });
+
     return booking;
+
+
+
   });
 }
