@@ -7,7 +7,7 @@ import logger from './config/logger.config';
 import { attachCorrelationIdMiddleware } from './middlewares/correlation.middleware';
 import dotenv from 'dotenv';
 import { setupEmailWorker } from './processors/email.process';
-import { addEmailToQueue } from './producers/email.producer';
+
 
 
 dotenv.config();
@@ -41,14 +41,5 @@ app.listen(serverConfig.PORT, async() => {
     setupEmailWorker(); // Initialize the email worker when the server starts
     logger.info(`Email worker has been set up and is ready to process email jobs.`);
 
-    addEmailToQueue({
-        to: 'sashankasekharswain0@gmail.com',
-        subject: 'Test Email from Notification Service',
-        templateId: 'welcome',
-
-        params: {
-            name: 'Sashank',
-            appName: 'Booking App',
-        }
-    })
+    
 });
