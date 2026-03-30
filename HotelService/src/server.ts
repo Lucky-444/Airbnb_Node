@@ -9,7 +9,8 @@ import {
 import logger from "./config/logger.config";
 import { attachCorrelationIdMiddleware } from "./middlewares/correlation.middleware";
 import sequelize from "./db/models/sequelize";
-
+import { setupRoomGenerationWorker } from "./processors/roomGeneration.processor";
+import { startScheduler } from "./scheduler/roomScheduler";
 const app = express();
 
 app.use(express.json());
@@ -32,12 +33,11 @@ app.use(genericErrorHandler);
 app.listen(serverConfig.PORT, async () => {
   logger.info(`Server is running on http://localhost:${serverConfig.PORT}`);
   logger.info(`Press Ctrl+C to stop the server.`);
+  await sequelize.authenticate(); // Test the connection to the database
+  logger.info("Database connection has been established successfully.");
+  setupRoomGenerationWorker();
 
-  try {
-    // Here we can add any logic that needs to be executed when the server starts, such as connecting to the database, initializing services, etc.
-    await sequelize.authenticate();
-    logger.info("Database connection has been established successfully.");
-  } catch (error) {
-    logger.error("Error occurred while starting the server.", error);
-  }
+  // Start the room availability extension scheduler
+  startScheduler();
+  logger.info("Room availability extension scheduler initialized");
 });
