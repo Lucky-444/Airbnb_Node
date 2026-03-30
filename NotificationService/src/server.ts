@@ -7,7 +7,7 @@ import logger from './config/logger.config';
 import { attachCorrelationIdMiddleware } from './middlewares/correlation.middleware';
 import dotenv from 'dotenv';
 import { setupEmailWorker } from './processors/email.process';
-
+import { setupDLQWorker } from "./processors/dlq.process";
 
 
 dotenv.config();
@@ -39,6 +39,7 @@ app.listen(serverConfig.PORT, async() => {
     logger.info(`Press Ctrl+C to stop the server.`);
 
     setupEmailWorker(); // Initialize the email worker when the server starts
+    setupDLQWorker(); // Initialize the DLQ worker when the server starts
     logger.info(`Email worker has been set up and is ready to process email jobs.`);
 
     

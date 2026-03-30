@@ -1,6 +1,6 @@
 import { Job, Worker } from "bullmq";
 import { NotificationDTO } from "../dtos/notification.dto";
-import { MAILER_QUEUE_NAME } from "../queues/mailer.queue";
+import { MAILER_QUEUE_NAME, mailerDLQ } from "../queues/mailer.queue";
 import { getRedisConnection } from "../config/redis.config";
 import { MAILER_PAYLOAD } from "../producers/email.producer";
 import { renderTemplate } from "../templates/template.handler";
@@ -39,7 +39,18 @@ export const setupEmailWorker = () => {
     console.log(`Email Job ${job.id} completed successfully.`);
   });
 
-  emailProcessor.on("failed", (job, err) => {
+  emailProcessor.on("failed", async (job, err) => {
     console.error(`Email Job ${job?.id} failed with error:`, err);
+
+    if (job && job.attemptsMade === job.opts.attempts) {
+      await mailerDLQ.add("FAILED_EMAIL", {
+        originalJobId: job.id,
+        payload: job.data,
+        error: err.message,
+        failedAt: new Date(),
+      });
+
+      logger.error(`Job ${job.id} moved to DLQ`);
+    }
   });
 };
